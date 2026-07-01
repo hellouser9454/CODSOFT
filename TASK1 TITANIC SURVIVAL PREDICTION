@@ -1,0 +1,139 @@
+import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+
+data = pd.read_csv("Titanic-Dataset.csv")
+
+print("First Five Records")
+print(data.head())
+
+print("\nDataset Information")
+print(data.info())
+
+print("\nDataset Shape")
+print(data.shape)
+
+print("\nMissing Values")
+print(data.isnull().sum())
+
+print("\nSurvival Count")
+print(data["Survived"].value_counts())
+
+data["Age"] = data["Age"].fillna(data["Age"].median())
+
+data["Embarked"] = data["Embarked"].fillna(
+    data["Embarked"].mode()[0]
+)
+
+data["Fare"] = data["Fare"].fillna(
+    data["Fare"].median()
+)
+
+encoder = LabelEncoder()
+
+data["Sex"] = encoder.fit_transform(
+    data["Sex"]
+)
+
+data["Embarked"] = encoder.fit_transform(
+    data["Embarked"]
+)
+
+data["FamilySize"] = (
+    data["SibSp"] +
+    data["Parch"] + 1
+)
+
+print("\nProcessed Data")
+print(data.head())
+
+X = data[
+    [
+        "Pclass",
+        "Sex",
+        "Age",
+        "SibSp",
+        "Parch",
+        "Fare",
+        "Embarked",
+        "FamilySize"
+    ]
+]
+
+y = data["Survived"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+print("\nTraining Data Shape")
+print(X_train.shape)
+
+print("\nTesting Data Shape")
+print(X_test.shape)
+
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(
+    y_test,
+    y_pred
+)
+
+print("\nAccuracy")
+print(accuracy)
+
+print("\nConfusion Matrix")
+print(
+    confusion_matrix(
+        y_test,
+        y_pred
+    )
+)
+
+print("\nClassification Report")
+print(
+    classification_report(
+        y_test,
+        y_pred
+    )
+)
+
+new_passenger = pd.DataFrame(
+    {
+        "Pclass": [1],
+        "Sex": [0],
+        "Age": [30],
+        "SibSp": [0],
+        "Parch": [0],
+        "Fare": [100],
+        "Embarked": [0],
+        "FamilySize": [1]
+    }
+)
+
+prediction = model.predict(
+    new_passenger
+)
+
+print("\nPrediction Result")
+
+if prediction[0] == 1:
+    print("Passenger Survived")
+else:
+    print("Passenger Did Not Survive")

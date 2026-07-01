@@ -1,0 +1,238 @@
+import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+
+data = pd.read_csv("advertising.csv")
+
+print("SALES PREDICTION DATASET")
+print(data.head())
+
+print("\nDATASET SHAPE")
+print(data.shape)
+
+print("\nCOLUMN NAMES")
+print(data.columns)
+
+print("\nDATA TYPES")
+print(data.dtypes)
+
+print("\nDATASET INFORMATION")
+print(data.info())
+
+print("\nSTATISTICAL SUMMARY")
+print(data.describe())
+
+print("\nMISSING VALUES")
+print(data.isnull().sum())
+
+print("\nFIRST 10 RECORDS")
+print(data.head(10))
+
+print("\nLAST 10 RECORDS")
+print(data.tail(10))
+
+print("\nTV ADVERTISING")
+print(data["TV"].head())
+
+print("\nRADIO ADVERTISING")
+print(data["Radio"].head())
+
+print("\nNEWSPAPER ADVERTISING")
+print(data["Newspaper"].head())
+
+print("\nSALES")
+print(data["Sales"].head())
+
+X = data[
+    [
+        "TV",
+        "Radio",
+        "Newspaper"
+    ]
+]
+
+y = data["Sales"]
+
+print("\nFEATURE VARIABLES")
+print(X.head())
+
+print("\nTARGET VARIABLE")
+print(y.head())
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+print("\nTRAINING FEATURES SHAPE")
+print(X_train.shape)
+
+print("\nTESTING FEATURES SHAPE")
+print(X_test.shape)
+
+print("\nTRAINING TARGET SHAPE")
+print(y_train.shape)
+
+print("\nTESTING TARGET SHAPE")
+print(y_test.shape)
+
+model = LinearRegression()
+
+print("\nMODEL CREATED SUCCESSFULLY")
+
+model.fit(
+    X_train,
+    y_train
+)
+
+print("\nMODEL TRAINING COMPLETED")
+
+y_pred = model.predict(
+    X_test
+)
+
+print("\nPREDICTED SALES")
+print(y_pred)
+
+print("\nACTUAL SALES")
+print(y_test.values)
+
+mae = mean_absolute_error(
+    y_test,
+    y_pred
+)
+
+mse = mean_squared_error(
+    y_test,
+    y_pred
+)
+
+rmse = np.sqrt(mse)
+
+r2 = r2_score(
+    y_test,
+    y_pred
+)
+
+print("\nMEAN ABSOLUTE ERROR")
+print(mae)
+
+print("\nMEAN SQUARED ERROR")
+print(mse)
+
+print("\nROOT MEAN SQUARED ERROR")
+print(rmse)
+
+print("\nR2 SCORE")
+print(r2)
+
+print("\nMODEL COEFFICIENTS")
+print(model.coef_)
+
+print("\nMODEL INTERCEPT")
+print(model.intercept_)
+
+comparison = pd.DataFrame(
+    {
+        "Actual Sales": y_test.values,
+        "Predicted Sales": y_pred
+    }
+)
+
+print("\nACTUAL VS PREDICTED SALES")
+print(comparison.head(20))
+
+new_data_1 = pd.DataFrame(
+    {
+        "TV": [230.1],
+        "Radio": [37.8],
+        "Newspaper": [69.2]
+    }
+)
+
+prediction_1 = model.predict(
+    new_data_1
+)
+
+print("\nPREDICTION FOR NEW CUSTOMER 1")
+print(prediction_1)
+
+new_data_2 = pd.DataFrame(
+    {
+        "TV": [44.5],
+        "Radio": [39.3],
+        "Newspaper": [45.1]
+    }
+)
+
+prediction_2 = model.predict(
+    new_data_2
+)
+
+print("\nPREDICTION FOR NEW CUSTOMER 2")
+print(prediction_2)
+
+new_data_3 = pd.DataFrame(
+    {
+        "TV": [151.5],
+        "Radio": [41.3],
+        "Newspaper": [58.5]
+    }
+)
+
+prediction_3 = model.predict(
+    new_data_3
+)
+
+print("\nPREDICTION FOR NEW CUSTOMER 3")
+print(prediction_3)
+
+training_score = model.score(
+    X_train,
+    y_train
+)
+
+testing_score = model.score(
+    X_test,
+    y_test
+)
+
+print("\nTRAINING SCORE")
+print(training_score)
+
+print("\nTESTING SCORE")
+print(testing_score)
+
+print("\nTOP 10 PREDICTIONS")
+
+sample_predictions = model.predict(
+    X_test.head(10)
+)
+
+for i in range(len(sample_predictions)):
+    print(
+        "Prediction",
+        i + 1,
+        ":",
+        sample_predictions[i]
+    )
+
+print("\nFEATURE IMPORTANCE")
+
+importance = pd.DataFrame(
+    {
+        "Feature": X.columns,
+        "Coefficient": model.coef_
+    }
+)
+
+print(importance)
+
+print("\nPROJECT COMPLETED SUCCESSFULLY")

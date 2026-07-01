@@ -1,0 +1,234 @@
+import pandas as pd
+import numpy as np
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+
+iris = load_iris()
+
+data = pd.DataFrame(
+    data=iris.data,
+    columns=iris.feature_names
+)
+
+data["Species"] = iris.target
+
+print("IRIS FLOWER DATASET")
+print(data.head())
+
+print("\nDATASET SHAPE")
+print(data.shape)
+
+print("\nCOLUMN NAMES")
+print(data.columns)
+
+print("\nDATA TYPES")
+print(data.dtypes)
+
+print("\nDATASET INFORMATION")
+print(data.info())
+
+print("\nSTATISTICAL SUMMARY")
+print(data.describe())
+
+print("\nMISSING VALUES")
+print(data.isnull().sum())
+
+print("\nNUMBER OF FLOWERS IN EACH SPECIES")
+print(data["Species"].value_counts())
+
+species_names = iris.target_names
+
+print("\nSPECIES NAMES")
+for i in range(len(species_names)):
+    print(i, "=", species_names[i])
+
+print("\nFIRST 10 RECORDS")
+print(data.head(10))
+
+print("\nLAST 10 RECORDS")
+print(data.tail(10))
+
+print("\nSEPAL LENGTH")
+print(data["sepal length (cm)"])
+
+print("\nSEPAL WIDTH")
+print(data["sepal width (cm)"])
+
+print("\nPETAL LENGTH")
+print(data["petal length (cm)"])
+
+print("\nPETAL WIDTH")
+print(data["petal width (cm)"])
+
+X = data[
+    [
+        "sepal length (cm)",
+        "sepal width (cm)",
+        "petal length (cm)",
+        "petal width (cm)"
+    ]
+]
+
+y = data["Species"]
+
+print("\nFEATURE DATA")
+print(X.head())
+
+print("\nTARGET DATA")
+print(y.head())
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+print("\nTRAINING FEATURES SHAPE")
+print(X_train.shape)
+
+print("\nTESTING FEATURES SHAPE")
+print(X_test.shape)
+
+print("\nTRAINING TARGET SHAPE")
+print(y_train.shape)
+
+print("\nTESTING TARGET SHAPE")
+print(y_test.shape)
+
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+print("\nMODEL CREATED SUCCESSFULLY")
+
+model.fit(
+    X_train,
+    y_train
+)
+
+print("\nMODEL TRAINING COMPLETED")
+
+y_pred = model.predict(
+    X_test
+)
+
+print("\nPREDICTED VALUES")
+print(y_pred)
+
+print("\nACTUAL VALUES")
+print(y_test.values)
+
+accuracy = accuracy_score(
+    y_test,
+    y_pred
+)
+
+print("\nMODEL ACCURACY")
+print(str(round(accuracy * 100, 2)) + "%")
+
+cm = confusion_matrix(
+    y_test,
+    y_pred
+)
+
+print("\nCONFUSION MATRIX")
+print(cm)
+
+report = classification_report(
+    y_test,
+    y_pred
+)
+
+print("\nCLASSIFICATION REPORT")
+print(report)
+
+feature_importance = pd.DataFrame(
+    {
+        "Feature": X.columns,
+        "Importance": model.feature_importances_
+    }
+)
+
+print("\nFEATURE IMPORTANCE")
+print(feature_importance)
+
+new_flower_1 = [
+    [5.1, 3.5, 1.4, 0.2]
+]
+
+prediction_1 = model.predict(
+    new_flower_1
+)
+
+print("\nNEW FLOWER 1 PREDICTION")
+print(
+    species_names[
+        prediction_1[0]
+    ]
+)
+
+new_flower_2 = [
+    [6.0, 2.9, 4.5, 1.5]
+]
+
+prediction_2 = model.predict(
+    new_flower_2
+)
+
+print("\nNEW FLOWER 2 PREDICTION")
+print(
+    species_names[
+        prediction_2[0]
+    ]
+)
+
+new_flower_3 = [
+    [6.7, 3.1, 5.6, 2.4]
+]
+
+prediction_3 = model.predict(
+    new_flower_3
+)
+
+print("\nNEW FLOWER 3 PREDICTION")
+print(
+    species_names[
+        prediction_3[0]
+    ]
+)
+
+all_predictions = model.predict(
+    X_test.head(10)
+)
+
+print("\nPREDICTIONS FOR FIRST 10 TEST RECORDS")
+print(all_predictions)
+
+print("\nCORRESPONDING SPECIES NAMES")
+for value in all_predictions:
+    print(species_names[value])
+
+training_score = model.score(
+    X_train,
+    y_train
+)
+
+testing_score = model.score(
+    X_test,
+    y_test
+)
+
+print("\nTRAINING SCORE")
+print(training_score)
+
+print("\nTESTING SCORE")
+print(testing_score)
+
+print("\nPROJECT COMPLETED SUCCESSFULLY")
